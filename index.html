@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>p5js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"
+    integrity="sha512-rCZdHNB0AePry6kAnKAVFMRfWPmUXSo+/vlGtrOUvhsxD0Punm/xWbEh+8vppPIOzKB9xnk42yCRZ5MD/jvvjQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="p5.sound.js"></script>
+    <link href="style.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="overlay" class="hidden">Click to play</div>
+    <div id="mouse" class="hidden"></div>
+    <button id ="sound-on" onclick="soundOn()">Sound on</button>
+    <script src="sketch.js"></script>
+
+  </body>
+
+  <script>
+
+  var sound = 0;
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function soundOn(){
+    sound = (sound+1)%2;
+    speed();
+    let buttonn = document.getElementById("sound-on");
+    if(sound == 1){
+      buttonn.innerHTML = "Sound Off";
+      sample1.play();
+      sample1.changeFrequency(20);
+      sample1.changeType('triangle');
+      sample2.play();
+      sample2.changeFrequency(40);
+      sample2.changeType('triangle');
+      p5StartAudio();
+    }
+    else{
+      buttonn.innerHTML = "Sound On";
+      sample1.stop();
+      sample2.stop();
+      p5StopAudio();
+    }
+
+    // sample.setValueCurve();
+    // for(let i=0; i<100; i++){
+    //   sample.setLFO();
+    //   await sleep(1000);
+    // }
+
+  }
+
+  window.addEventListener("mousemove", (e) => {
+      let xPos = e.clientX;
+      let yPos = e.clientY;
+      if(sound == 1){
+        // p5SetGain();
+        sample1.changeGain(sin(yPos));
+        sample1.setValueCurve();
+        sample1.setLFO();
+        sample2.changeGain(-sin(yPos));
+        sample2.setValueCurve();
+        sample2.setLFO();
+      }
+    });
+
+  </script>
+
+  <script src="shared.js"></script>
+  <script src="oscillator-sample.js"></script>
+  <script> var sample1 = new OscillatorSample(); var sample2 = new OscillatorSample();</script>
+</html>
